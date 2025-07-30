@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Flashcard Quiz App</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 20px;
+      background-color: #f0f4f8;
+    }
+    .card {
+      background: white;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      width: 300px;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    button {
+      margin: 5px;
+      padding: 10px 15px;
+      border: none;
+      background-color: #007bff;
+      color: white;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #0056b3;
+    }
+    .form-section input, .form-section textarea {
+      width: 100%;
+      margin-bottom: 10px;
+      padding: 8px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Flashcard Quiz App</h1>
+  <div class="card" id="flashcard">
+    <div id="card-content">Question will appear here</div>
+    <button onclick="toggleAnswer()">Show Answer</button>
+  </div>
+
+  <button onclick="prevCard()">Previous</button>
+  <button onclick="nextCard()">Next</button>
+
+  <h2>Manage Flashcards</h2>
+  <div class="form-section">
+    <input type="text" id="question" placeholder="Enter question">
+    <textarea id="answer" placeholder="Enter answer"></textarea>
+    <button onclick="addFlashcard()">Add Flashcard</button>
+    <button onclick="editFlashcard()">Edit Current</button>
+    <button onclick="deleteFlashcard()">Delete Current</button>
+  </div>
+
+  <script>
+    let flashcards = [];
+    let currentIndex = 0;
+    let showingAnswer = false;
+
+    function renderCard() {
+      if (flashcards.length === 0) {
+        document.getElementById("card-content").innerText = "No flashcards available.";
+        return;
+      }
+      showingAnswer = false;
+      document.getElementById("card-content").innerText = flashcards[currentIndex].question;
+    }
+
+    function toggleAnswer() {
+      if (flashcards.length === 0) return;
+      showingAnswer = !showingAnswer;
+      document.getElementById("card-content").innerText = showingAnswer ? flashcards[currentIndex].answer : flashcards[currentIndex].question;
+    }
+
+    function nextCard() {
+      if (flashcards.length === 0) return;
+      currentIndex = (currentIndex + 1) % flashcards.length;
+      renderCard();
+    }
+
+    function prevCard() {
+      if (flashcards.length === 0) return;
+      currentIndex = (currentIndex - 1 + flashcards.length) % flashcards.length;
+      renderCard();
+    }
+
+    function addFlashcard() {
+      const q = document.getElementById("question").value;
+      const a = document.getElementById("answer").value;
+      if (q && a) {
+        flashcards.push({ question: q, answer: a });
+        currentIndex = flashcards.length - 1;
+        renderCard();
+        document.getElementById("question").value = "";
+        document.getElementById("answer").value = "";
+      }
+    }
+
+    function editFlashcard() {
+      const q = document.getElementById("question").value;
+      const a = document.getElementById("answer").value;
+      if (flashcards.length > 0 && q && a) {
+        flashcards[currentIndex] = { question: q, answer: a };
+        renderCard();
+      }
+    }
+
+    function deleteFlashcard() {
+      if (flashcards.length > 0) {
+        flashcards.splice(currentIndex, 1);
+        currentIndex = Math.max(0, currentIndex - 1);
+        renderCard();
+      }
+    }
+
+    // Initial render
+    renderCard();
+  </script>
+</body>
+</html>
